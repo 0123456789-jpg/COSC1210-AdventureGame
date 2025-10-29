@@ -92,13 +92,7 @@ def generate_background(
         are represented in (x, y).
     """
     return [
-        item
-        for sub in [
-            [
-                ((random.randrange(6), random.randrange(4)), (x, y))
-                for y in range(height)
-            ]  # Choose background tile randomly.
-            for x in range(width)
-        ]
-        for item in sub
-    ]  # Flatten 2-dimension list.
+        ((random.randrange(6), random.randrange(4)), (x, y))
+        for y in range(height)
+        for x in range(width)
+    ]
