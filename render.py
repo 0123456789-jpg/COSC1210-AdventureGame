@@ -7,9 +7,10 @@ size of a regular texture is 32 by 16, while a double-height texture's size is
 32 by 32.
 """
 
-import pygame as pg
 import os
 import random
+
+import pygame as pg
 
 TILE_WIDTH: int = 32
 TILE_HEIGHT: int = 16
@@ -46,11 +47,7 @@ def draw_tile(surface: pg.Surface, src: tuple[int, int], dest: tuple[int, int]) 
         None: Nothing to return.
     """
 
-    surface.blit(
-        TILE,
-        (dest[0] * TILE_WIDTH, dest[1] * TILE_HEIGHT),
-        area=(src[0] * TILE_WIDTH, src[1] * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT),
-    )
+    draw_tile_custom(surface, src, (dest[0] * TILE_WIDTH, dest[1] * TILE_HEIGHT))
 
 
 def draw_tile_2h(
@@ -68,9 +65,27 @@ def draw_tile_2h(
         None: Nothing to return.
     """
 
+    draw_tile_2h_custom(
+        surface, src, (dest[0] * TILE_WIDTH, (dest[1] - 1) * TILE_HEIGHT)
+    )
+
+
+def draw_tile_custom(
+    surface: pg.Surface, src: tuple[int, int], dest: tuple[int, int]
+) -> None:
     surface.blit(
         TILE,
-        (dest[0] * TILE_WIDTH, (dest[1] - 1) * TILE_HEIGHT),
+        dest,
+        area=(src[0] * TILE_WIDTH, src[1] * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT),
+    )
+
+
+def draw_tile_2h_custom(
+    surface: pg.Surface, src: tuple[int, int], dest: tuple[int, int]
+) -> None:
+    surface.blit(
+        TILE,
+        dest,
         area=(src[0] * TILE_WIDTH, src[1] * TILE_HEIGHT, TILE_WIDTH, 2 * TILE_HEIGHT),
     )
 

@@ -1,6 +1,7 @@
 import pygame as pg
+
 import render
-from config import MAP_WIDTH, MAP_HEIGHT, FRAMERATE
+from config import FRAMERATE, MAP_HEIGHT, MAP_WIDTH
 
 
 def main() -> None:
