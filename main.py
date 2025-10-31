@@ -23,7 +23,7 @@ def main() -> None:
     )
     spawner: sprite.Spawner = sprite.Spawner()
     running: bool = True
-    spawner.add_sprite("main", sprite.TextureSprite(display, (1, 19), (3, 6)))
+    spawner.add_sprite("main", sprite.Texture2HSprite(display, (9, 4), (3, 6)))
     while running:
         for e in pg.event.get():
             if e.type == pg.QUIT:
@@ -35,16 +35,42 @@ def main() -> None:
                     target: Optional[sprite.Sprite] = spawner.get_sprite("main")
                     if target != None:
                         spawner.add_animation(
-                            "move",
+                            "random",
                             ani.SpriteMoveTask(
                                 target,
                                 30,
                                 (randrange(MAP_HEIGHT), randrange(MAP_WIDTH)),
                             ),
                         )
+            elif e.type == pg.MOUSEBUTTONUP:
+                map_pos: tuple[int, int] = util.screen_to_map(e.dict["pos"])
+                main_sprite: Optional[sprite.Sprite] = spawner.get_sprite("main")
+                if main_sprite != None and map_pos != main_sprite.map_pos:
+                    spawner.add_animation(
+                        "mouse", ani.SpriteMoveTask(main_sprite, 120, (map_pos))
+                    )
         for item in map:
             render.draw_tile(display, item[0], item[1])
-        render.draw_tile_2h(display, (9, 4), (3, 6))
+
+        # Button prototype
+        import time
+
+        from render import TILE_HEIGHT, TILE_WIDTH
+
+        btn_rect: pg.Rect = pg.Rect(
+            util.map_to_screen((3, 9 - 1)), (TILE_WIDTH, TILE_HEIGHT * 2)
+        )
+        if btn_rect.collidepoint(pg.mouse.get_pos()):
+            pg.mouse.set_cursor(pg.SYSTEM_CURSOR_HAND)
+            render.draw_tile_2h(display, (2, 12), (3, 9))
+            text: pg.Surface = pg.font.Font(None, 24).render(
+                "timestamp: " + str(time.time()), False, pg.Color(255, 255, 0)
+            )
+            display.blit(text, (8, 8))
+        else:
+            pg.mouse.set_cursor(pg.SYSTEM_CURSOR_ARROW)
+            render.draw_tile_2h(display, (2, 15), (3, 9))
+
         spawner.tick()
         pg.display.flip()
         display.fill((0, 0, 0))

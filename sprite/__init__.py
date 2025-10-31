@@ -46,6 +46,17 @@ class TextureSprite(Sprite):
         render.draw_tile_custom(self.surface, self.texture, self.screen_pos)
 
 
+class Texture2HSprite(TextureSprite):
+    def draw(self) -> None:
+        from render import TILE_HEIGHT
+
+        render.draw_tile_2h_custom(
+            self.surface,
+            self.texture,
+            (self.screen_pos[0], self.screen_pos[1] - TILE_HEIGHT),
+        )
+
+
 class CustomSprite(Sprite):
     user_data: dict[str, object]
     draw_func: Callable[[tuple[int, int], dict[str, object]], None]
