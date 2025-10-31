@@ -1,4 +1,3 @@
-import copy
 from abc import ABC, abstractmethod
 from collections.abc import Iterator
 from typing import Optional
@@ -14,7 +13,7 @@ class Task(Iterator[None], ABC):
 
     def __init__(self, target: Sprite, duration: int) -> None:
         super().__init__()
-        self.target = copy.copy(target)
+        self.target = target
         self.duration = duration
 
     @abstractmethod
@@ -51,7 +50,7 @@ class SpriteMoveTask(Task):
                 target.map_pos[0] * TILE_WIDTH,
                 target.map_pos[1] * TILE_HEIGHT,
             )
-        self.stop = stop
+        self.stop = (stop[0] * TILE_WIDTH, stop[1] * TILE_HEIGHT)
 
     def __iter__(self) -> Iterator[None]:
         return self

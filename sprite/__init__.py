@@ -1,10 +1,8 @@
-import copy
 from abc import ABC, abstractmethod
 from typing import Callable, Optional
 
 import pygame as pg
 
-import animation as ani
 import render
 from render import TILE_HEIGHT, TILE_WIDTH
 
@@ -44,7 +42,7 @@ class TextureSprite(Sprite):
     ) -> None:
         self.map_pos = position
         self.screen_pos = (position[0] * TILE_WIDTH, position[1] * TILE_HEIGHT)
-        self.surface = copy.copy(surface)
+        self.surface = surface
         self.texture = texture
 
     def draw(self) -> None:
@@ -70,6 +68,8 @@ class CustomSprite(Sprite):
 
 
 class Spawner:
+    import sprite.animation as ani
+
     sprite_pool: dict[str, Sprite] = {}
     animation_exec: ani.Executor = ani.Executor()
 
@@ -77,6 +77,8 @@ class Spawner:
         self.sprite_pool[name] = sprite
 
     def remove_sprite(self, name: str) -> tuple[Sprite, list[ani.Task]]:
+        import sprite.animation as ani
+
         sprite: Sprite = self.sprite_pool.pop(name)
         tasks: list[ani.Task] = [
             task
@@ -87,8 +89,11 @@ class Spawner:
         ]
         return (sprite, tasks)
 
+    def get_sprite(self, name: str) -> Optional[Sprite]:
+        return self.sprite_pool.get(name)
+
     def add_animation(self, name: str, task: ani.Task) -> Optional[ani.Task]:
-        if task.target in self.sprite_pool:
+        if task.target in self.sprite_pool.values():
             self.animation_exec.add(name, task)
             return None
         else:
