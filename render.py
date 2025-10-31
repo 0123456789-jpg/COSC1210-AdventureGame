@@ -12,6 +12,8 @@ import random
 
 import pygame as pg
 
+import util
+
 TILE_WIDTH: int = 32
 TILE_HEIGHT: int = 16
 TYPE_WIDTH: int = 9
@@ -47,7 +49,7 @@ def draw_tile(surface: pg.Surface, src: tuple[int, int], dest: tuple[int, int]) 
         None: Nothing to return.
     """
 
-    draw_tile_custom(surface, src, (dest[0] * TILE_WIDTH, dest[1] * TILE_HEIGHT))
+    draw_tile_custom(surface, src, util.map_to_screen(dest))
 
 
 def draw_tile_2h(
@@ -65,28 +67,28 @@ def draw_tile_2h(
         None: Nothing to return.
     """
 
-    draw_tile_2h_custom(
-        surface, src, (dest[0] * TILE_WIDTH, (dest[1] - 1) * TILE_HEIGHT)
-    )
+    draw_tile_2h_custom(surface, src, util.map_to_screen((dest[0], dest[1] - 1)))
 
 
 def draw_tile_custom(
     surface: pg.Surface, src: tuple[int, int], dest: tuple[int, int]
 ) -> None:
+    origin: tuple[int, int] = util.map_to_screen(src)
     surface.blit(
         TILE,
         dest,
-        area=(src[0] * TILE_WIDTH, src[1] * TILE_HEIGHT, TILE_WIDTH, TILE_HEIGHT),
+        area=(origin[0], origin[1], TILE_WIDTH, TILE_HEIGHT),
     )
 
 
 def draw_tile_2h_custom(
     surface: pg.Surface, src: tuple[int, int], dest: tuple[int, int]
 ) -> None:
+    origin: tuple[int, int] = util.map_to_screen(src)
     surface.blit(
         TILE,
         dest,
-        area=(src[0] * TILE_WIDTH, src[1] * TILE_HEIGHT, TILE_WIDTH, 2 * TILE_HEIGHT),
+        area=(origin[0], origin[1], TILE_WIDTH, 2 * TILE_HEIGHT),
     )
 
 

@@ -6,13 +6,14 @@ import pygame as pg
 import render
 import sprite as sprite
 import sprite.animation as ani
+import util
 from config import FRAMERATE, MAP_HEIGHT, MAP_WIDTH
 
 
 def main() -> None:
     pg.init()
     display = pg.display.set_mode(
-        (MAP_WIDTH * render.TILE_WIDTH, MAP_HEIGHT * render.TILE_HEIGHT),
+        util.map_to_screen((MAP_WIDTH, MAP_HEIGHT)),
     )
     pg.display.set_caption("COSC 1210")
     render.init()

@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterator
 from typing import Optional
 
-from render import TILE_HEIGHT, TILE_WIDTH
+import util
 from sprite import Sprite
 
 
@@ -44,13 +44,10 @@ class SpriteMoveTask(Task):
     ) -> None:
         super().__init__(target, duration)
         if start != None:
-            self.start = (start[0] * TILE_WIDTH, start[1] * TILE_HEIGHT)
+            self.start = util.map_to_screen(start)
         else:
-            self.start = (
-                target.map_pos[0] * TILE_WIDTH,
-                target.map_pos[1] * TILE_HEIGHT,
-            )
-        self.stop = (stop[0] * TILE_WIDTH, stop[1] * TILE_HEIGHT)
+            self.start = util.map_to_screen(target.map_pos)
+        self.stop = util.map_to_screen(stop)
 
     def __iter__(self) -> Iterator[None]:
         return self

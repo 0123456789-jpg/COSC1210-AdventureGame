@@ -4,7 +4,7 @@ from typing import Callable, Optional
 import pygame as pg
 
 import render
-from render import TILE_HEIGHT, TILE_WIDTH
+import util
 
 
 class Sprite(ABC):
@@ -21,16 +21,13 @@ class Sprite(ABC):
         """
         Align `map_pos` with the current `screen_pos`.
         """
-        self.map_pos = (
-            self.screen_pos[0] // TILE_WIDTH,
-            self.screen_pos[1] // TILE_HEIGHT,
-        )
+        self.map_pos = util.screen_to_map(self.screen_pos)
 
     def align_screen_pos(self) -> None:
         """
         Align `screen_pos` with the current `map_pos`.
         """
-        self.screen_pos = (self.map_pos[0] * TILE_WIDTH, self.map_pos[1] * TILE_WIDTH)
+        self.screen_pos = util.map_to_screen(self.map_pos)
 
 
 class TextureSprite(Sprite):
@@ -41,7 +38,7 @@ class TextureSprite(Sprite):
         self, surface: pg.Surface, texture: tuple[int, int], position: tuple[int, int]
     ) -> None:
         self.map_pos = position
-        self.screen_pos = (position[0] * TILE_WIDTH, position[1] * TILE_HEIGHT)
+        self.screen_pos = util.map_to_screen(position)
         self.surface = surface
         self.texture = texture
 
