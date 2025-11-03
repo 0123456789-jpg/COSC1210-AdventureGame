@@ -89,11 +89,9 @@ class Spawner:
 
         sprite: Sprite = self.sprite_pool.pop(name)
         tasks: list[ani.Task] = [
-            task
-            for task in [
-                self.animation_exec.remove(task) for task in sprite.animations.copy()
-            ]
-            if task != None
+            result
+            for task in sprite.animations.copy()
+            if (result := self.animation_exec.remove(task)) != None
         ]
         return (sprite, tasks)
 
