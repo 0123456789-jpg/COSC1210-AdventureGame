@@ -23,7 +23,7 @@ def main() -> None:
     )
     spawner: sprite.Spawner = sprite.Spawner()
     running: bool = True
-    spawner.add_sprite("main", sprite.Texture2HSprite(display, (9, 4), (3, 6)))
+    spawner.add_sprite("main", sprite.TextureSprite(display, (9, 4), (3, 6), True))
     while running:
         for e in pg.event.get():
             if e.type == pg.QUIT:

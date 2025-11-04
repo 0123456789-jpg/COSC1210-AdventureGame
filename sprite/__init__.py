@@ -33,28 +33,32 @@ class Sprite(ABC):
 class TextureSprite(Sprite):
     surface: pg.Surface
     texture: tuple[int, int]
+    double_height: bool
 
     def __init__(
-        self, surface: pg.Surface, texture: tuple[int, int], position: tuple[int, int]
+        self,
+        surface: pg.Surface,
+        texture: tuple[int, int],
+        position: tuple[int, int],
+        double_height: bool,
     ) -> None:
         self.map_pos = position
         self.screen_pos = util.map_to_screen(position)
         self.surface = surface
         self.texture = texture
+        self.double_height = double_height
 
     def draw(self) -> None:
-        render.draw_tile_custom(self.surface, self.texture, self.screen_pos)
+        if self.double_height:
+            from render import TILE_HEIGHT
 
-
-class Texture2HSprite(TextureSprite):
-    def draw(self) -> None:
-        from render import TILE_HEIGHT
-
-        render.draw_tile_2h_custom(
-            self.surface,
-            self.texture,
-            (self.screen_pos[0], self.screen_pos[1] - TILE_HEIGHT),
-        )
+            render.draw_tile_2h_custom(
+                self.surface,
+                self.texture,
+                (self.screen_pos[0], self.screen_pos[1] - TILE_HEIGHT),
+            )
+        else:
+            render.draw_tile_custom(self.surface, self.texture, self.screen_pos)
 
 
 class CustomSprite(Sprite):
