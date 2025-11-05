@@ -4,7 +4,7 @@ from typing import Optional
 import pygame as pg
 
 import render
-import sprite as sprite
+import sprite
 import sprite.animation as ani
 import util
 from config import FRAMERATE, MAP_HEIGHT, MAP_WIDTH
@@ -40,6 +40,15 @@ def main() -> None:
                                 target,
                                 30,
                                 (randrange(MAP_HEIGHT), randrange(MAP_WIDTH)),
+                            ),
+                        )
+                elif e.dict["key"] == pg.K_n:
+                    target: Optional[sprite.Sprite] = spawner.get_sprite("main")
+                    if target != None and isinstance(target, sprite.TextureSprite):
+                        spawner.add_animation(
+                            "texture",
+                            ani.TextureSeqTask(
+                                target, 300, [(2, x * 3) for x in range(4, 10)], (9, 4)
                             ),
                         )
             elif e.type == pg.MOUSEBUTTONUP:

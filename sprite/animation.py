@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-from collections.abc import Iterator
-from typing import Optional
+from collections.abc import Iterable, Iterator
+from typing import Optional, cast
 
 import util
 from sprite import Sprite
@@ -29,6 +29,9 @@ class Task(Iterator[None], ABC):
     @abstractmethod
     def reset(self) -> None:
         pass
+
+    def active(self) -> bool:
+        return self.progress < self.duration
 
 
 class SpriteMoveTask(Task):
@@ -60,7 +63,7 @@ class SpriteMoveTask(Task):
     def __next__(self) -> None:
         delta_x: int = self.stop[0] - self.start[0]
         delta_y: int = self.stop[1] - self.start[1]
-        if self.progress < self.duration:
+        if self.active():
             move_x: int = delta_x * (self.progress + 1) // self.duration
             move_y: int = delta_y * (self.progress + 1) // self.duration
             self.target.screen_pos = (self.start[0] + move_x, self.start[1] + move_y)
@@ -69,6 +72,57 @@ class SpriteMoveTask(Task):
             return None
         else:
             raise StopIteration
+
+
+class TextureSeqTask(Task):
+    from sprite import TextureSprite
+
+    sequence: Iterable[tuple[int, int]]
+    start: tuple[int, int]
+    end: tuple[int, int]
+    iterator: Iterator[tuple[int, int]]
+
+    def get_target(self) -> TextureSprite:
+        from sprite import TextureSprite
+
+        return cast(TextureSprite, self.target)
+
+    def __init__(
+        self,
+        target: TextureSprite,
+        duration: int,
+        sequence: Iterable[tuple[int, int]],
+        end: tuple[int, int],
+    ) -> None:
+        super().__init__(target, duration)
+        self.sequence = sequence
+        self.end = end
+        self.setup_iter()
+        self.start = target.texture
+
+    def setup_iter(self) -> None:
+        self.iterator = iter(self.sequence)
+
+    def __iter__(self) -> Iterator[None]:
+        return self
+
+    def __next__(self) -> None:
+        if self.active():
+            try:
+                texture: tuple[int, int] = next(self.iterator)
+            except StopIteration:
+                self.setup_iter()
+                texture: tuple[int, int] = next(self.iterator)
+            self.get_target().texture = texture
+            self.progress += 1
+            return None
+        else:
+            self.get_target().texture = self.end
+            raise StopIteration
+
+    def reset(self) -> None:
+        self.progress = 0
+        self.get_target().texture = self.start
 
 
 class Executor:
