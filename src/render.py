@@ -32,8 +32,8 @@ def init() -> None:
     """
 
     global TILE, TEXT
-    TILE = pg.image.load(os.path.join("images", "tileset.png")).convert_alpha()
-    TEXT = pg.image.load(os.path.join("images", "type.png")).convert_alpha()
+    TILE = pg.image.load(os.path.join("src", "images", "tileset.png")).convert_alpha()
+    TEXT = pg.image.load(os.path.join("src", "images", "type.png")).convert_alpha()
 
 
 def draw_tile(surface: pg.Surface, src: tuple[int, int], dest: tuple[int, int]) -> None:
