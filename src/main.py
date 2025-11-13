@@ -1,5 +1,4 @@
 from random import randrange
-from typing import Optional
 
 import pygame as pg
 
@@ -32,8 +31,7 @@ def main() -> None:
                 if e.dict["key"] == pg.K_SPACE:
                     map = render.generate_background(MAP_WIDTH, MAP_HEIGHT)
                 elif e.dict["key"] == pg.K_m:
-                    target: Optional[sprite.Sprite] = spawner.get_sprite("main")
-                    if target != None:
+                    if (target := spawner.get_sprite("main")) != None:
                         spawner.add_animation(
                             "random",
                             ani.SpriteMoveTask(
@@ -43,8 +41,9 @@ def main() -> None:
                             ),
                         )
                 elif e.dict["key"] == pg.K_n:
-                    target: Optional[sprite.Sprite] = spawner.get_sprite("main")
-                    if target != None and isinstance(target, sprite.TextureSprite):
+                    if (target := spawner.get_sprite("main")) != None and isinstance(
+                        target, sprite.TextureSprite
+                    ):
                         spawner.add_animation(
                             "texture",
                             ani.TextureSeqTask(
@@ -53,8 +52,9 @@ def main() -> None:
                         )
             elif e.type == pg.MOUSEBUTTONUP:
                 map_pos: tuple[int, int] = util.screen_to_map(e.dict["pos"])
-                main_sprite: Optional[sprite.Sprite] = spawner.get_sprite("main")
-                if main_sprite != None and map_pos != main_sprite.map_pos:
+                if (
+                    main_sprite := spawner.get_sprite("main")
+                ) != None and map_pos != main_sprite.map_pos:
                     spawner.add_animation(
                         "mouse", ani.SpriteMoveTask(main_sprite, 120, (map_pos))
                     )
