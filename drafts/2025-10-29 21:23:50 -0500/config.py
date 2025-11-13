@@ -1,0 +1,4 @@
+MAP_WIDTH: int = 20
+MAP_HEIGHT: int = 20
+
+FRAMERATE: int = 10
