@@ -61,9 +61,9 @@ class SpriteMoveTask(Task):
         self.target.align_map_pos()
 
     def __next__(self) -> None:
-        delta_x: int = self.stop[0] - self.start[0]
-        delta_y: int = self.stop[1] - self.start[1]
         if self.active():
+            delta_x: int = self.stop[0] - self.start[0]
+            delta_y: int = self.stop[1] - self.start[1]
             move_x: int = delta_x * (self.progress + 1) // self.duration
             move_y: int = delta_y * (self.progress + 1) // self.duration
             self.target.screen_pos = (self.start[0] + move_x, self.start[1] + move_y)
