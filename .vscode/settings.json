@@ -1,0 +1,29 @@
+{
+    "python.analysis.extraPaths": [
+        "./lib/"
+    ],
+    "python.analysis.typeCheckingMode": "strict",
+    "cSpell.words": [
+        "blit",
+        "COSC",
+        "tileset"
+    ],
+    "python.analysis.autoFormatStrings": true,
+    "isort.args": [
+        "--profile",
+        "black"
+    ],
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit"
+        },
+    },
+    "python.analysis.exclude": [
+        "drafts/**"
+    ],
+    "search.exclude": {
+        "drafts/**": true
+    },
+}
