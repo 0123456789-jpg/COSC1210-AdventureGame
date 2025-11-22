@@ -32,10 +32,10 @@ def init() -> None:
 
     global TILE, TEXT
     TILE = pg.image.load(
-        os.path.join("goosestone", "images", "tileset.png")
+        os.path.join("goosestone", "assets", "tileset.png")
     ).convert_alpha()
     TEXT = pg.image.load(
-        os.path.join("goosestone", "images", "type.png")
+        os.path.join("goosestone", "assets", "type.png")
     ).convert_alpha()
 
 
