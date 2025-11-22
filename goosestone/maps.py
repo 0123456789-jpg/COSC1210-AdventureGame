@@ -2,7 +2,6 @@ import random
 from enum import Enum
 
 import pygame as pg
-
 import render
 
 
@@ -35,7 +34,7 @@ class Map:
 
     def gen_tiles(self) -> None:
         pool: list[TileType] = (
-            [TileType.GRASSLAND] * 30 + [TileType.MOUNTAIN] * 5 + [TileType.PORTAL]
+            [TileType.GRASSLAND] * 45 + [TileType.MOUNTAIN] * 4 + [TileType.PORTAL]
         )
         self.tiles = [
             [
