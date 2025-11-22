@@ -48,6 +48,8 @@ def main() -> None:
                                 target, 300, [(2, x * 3) for x in range(4, 10)], (9, 4)
                             ),
                         )
+                elif e.dict["key"] == pg.K_ESCAPE:
+                    running = False
             elif e.type == pg.MOUSEBUTTONUP:
                 map_pos: tuple[int, int] = util.screen_to_map(e.dict["pos"])
                 if (
@@ -63,10 +65,9 @@ def main() -> None:
         if world.focus == (0, 0):
             import time
 
-            from render import TILE_HEIGHT, TILE_WIDTH
-
             btn_rect: pg.Rect = pg.Rect(
-                util.map_to_screen((3, 9 - 1)), (TILE_WIDTH, TILE_HEIGHT * 2)
+                util.map_to_screen((3, 9 - 1)),
+                (render.TILE_WIDTH, render.TILE_HEIGHT * 2),
             )
             if btn_rect.collidepoint(pg.mouse.get_pos()):
                 pg.mouse.set_cursor(pg.SYSTEM_CURSOR_HAND)
@@ -89,6 +90,19 @@ def main() -> None:
         pg.display.flip()
         display.fill((0, 0, 0))
         timer.tick(FRAMERATE)
+
+    text: pg.Surface = pg.font.Font(None, 48).render(
+        f"Game will quit in 3 seconds...", False, pg.Color(255, 255, 0)
+    )
+    display.blit(
+        text,
+        (
+            (MAP_WIDTH * render.TILE_WIDTH - text.get_width()) // 2,
+            (MAP_HEIGHT * render.TILE_HEIGHT - text.get_height()) // 2,
+        ),
+    )
+    pg.display.flip()
+    pg.time.delay(3000)
 
 
 main()
