@@ -3,6 +3,7 @@ from enum import Enum
 
 import pygame as pg
 import render
+from config import WORLD_HEIGHT, WORLD_WIDTH
 
 
 class TileType(Enum):
@@ -15,16 +16,21 @@ class Tile:
     tile_type: TileType
     background: tuple[int, int]
     location: tuple[int, int]
+    info: dict[
+        str, tuple[int, int]
+    ]  # Temporary workaround cuz' we don't have Rust-style enum
 
     def __init__(
         self,
         tile_type: TileType,
         background: tuple[int, int],
         location: tuple[int, int],
+        info: dict[str, tuple[int, int]],
     ) -> None:
         self.tile_type = tile_type
         self.background = background
         self.location = location
+        self.info = info
 
 
 class Map:
@@ -42,6 +48,12 @@ class Map:
                     random.choice(pool),
                     (random.randrange(6), random.randrange(4)),
                     (x, y),
+                    {
+                        "portal": (
+                            random.randrange(WORLD_WIDTH),
+                            random.randrange(WORLD_HEIGHT),
+                        )
+                    },
                 )
                 for y in range(self.height)
             ]

@@ -6,7 +6,7 @@ import render
 import sprite
 import sprite.animation as ani
 import util
-from config import FRAMERATE, MAP_HEIGHT, MAP_WIDTH
+from config import FRAMERATE, MAP_HEIGHT, MAP_WIDTH, WORLD_HEIGHT, WORLD_WIDTH
 
 
 def main() -> None:
@@ -14,10 +14,10 @@ def main() -> None:
     display = pg.display.set_mode(
         util.map_to_screen((MAP_WIDTH, MAP_HEIGHT)),
     )
-    pg.display.set_caption("COSC 1210")
+    pg.display.set_caption("GooseStone for COSC 1210")
     render.init()
     timer = pg.time.Clock()
-    world: maps.MapGrid = maps.MapGrid(3, 3, MAP_WIDTH, MAP_HEIGHT)
+    world: maps.MapGrid = maps.MapGrid(WORLD_WIDTH, WORLD_HEIGHT, MAP_WIDTH, MAP_HEIGHT)
     spawner: sprite.Spawner = sprite.Spawner()
     running: bool = True
     spawner.add_sprite("main", sprite.TextureSprite(display, (9, 4), (3, 6), True))
@@ -55,9 +55,7 @@ def main() -> None:
                 ) != None and map_pos != main_sprite.map_pos:
                     spawner.add_animation(
                         "mouse",
-                        ani.CollideMoveTask(
-                            main_sprite, FRAMERATE // 2, map_pos, world.focus_map()
-                        ),
+                        ani.MainMoveTask(main_sprite, FRAMERATE // 2, map_pos, world),
                     )
         world.focus_map().draw(display)
 

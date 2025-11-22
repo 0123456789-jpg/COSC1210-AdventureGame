@@ -76,32 +76,36 @@ class SpriteMoveTask(Task):
             raise StopIteration
 
 
-class CollideMoveTask(SpriteMoveTask):
-    map: maps.Map
+class MainMoveTask(SpriteMoveTask):
+    world: maps.MapGrid
 
     def __init__(
         self,
         target: Sprite,
         duration: int,
         stop: tuple[int, int],
-        map: maps.Map,
+        world: maps.MapGrid,
         start: Optional[tuple[int, int]] = None,
     ) -> None:
         super().__init__(target, duration, stop, start)
-        self.map = map
+        self.world = world
 
     def __next__(self) -> None:
         prev_screen: tuple[int, int] = self.target.screen_pos
         prev_map: tuple[int, int] = self.target.map_pos
         super().__next__()
         cur_x, cur_y = self.target.map_pos
-        if (
-            self.map.tiles[cur_x][cur_y].tile_type == maps.TileType.MOUNTAIN
-        ):  # Bouncing back
+        tile: maps.Tile = self.world.focus_map().tiles[cur_x][cur_y]
+        if tile.tile_type == maps.TileType.MOUNTAIN:  # Bouncing back
             self.target.screen_pos = prev_screen
             self.reset()
             self.stop = util.map_to_screen(prev_map)
             self.duration = config.FRAMERATE // 10
+        elif tile.tile_type == maps.TileType.PORTAL:
+            self.target.map_pos = (0, 1)
+            self.target.align_screen_pos()
+            self.world.jump(tile.info["portal"])
+            raise StopIteration
 
 
 class TextureSeqTask(Task):
