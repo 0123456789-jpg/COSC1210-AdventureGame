@@ -31,12 +31,19 @@ def init() -> None:
     """
 
     global TILE, TEXT
-    TILE = pg.image.load(
-        os.path.join("goosestone", "assets", "tileset.png")
-    ).convert_alpha()
-    TEXT = pg.image.load(
-        os.path.join("goosestone", "assets", "type.png")
-    ).convert_alpha()
+    tile_path = os.path.join("assets", "tileset.png")
+    text_path = os.path.join("assets", "type.png")
+
+    def inner() -> tuple[pg.Surface, pg.Surface]:
+        try:
+            tile = pg.image.load(os.path.join("goosestone", tile_path)).convert_alpha()
+            text = pg.image.load(os.path.join("goosestone", text_path)).convert_alpha()
+        except FileNotFoundError:
+            tile = pg.image.load(tile_path).convert_alpha()
+            text = pg.image.load(text_path).convert_alpha()
+        return tile, text
+
+    TILE, TEXT = inner()
 
 
 def draw_tile(surface: pg.Surface, src: tuple[int, int], dest: tuple[int, int]) -> None:
