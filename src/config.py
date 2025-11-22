@@ -1,4 +1,4 @@
-MAP_WIDTH: int = 20
-MAP_HEIGHT: int = 20
+MAP_WIDTH: int = 16
+MAP_HEIGHT: int = 24
 
 FRAMERATE: int = 60
