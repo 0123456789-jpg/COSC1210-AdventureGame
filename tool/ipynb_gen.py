@@ -4,8 +4,8 @@ from typing import Union
 
 
 def main() -> None:
-    with open(os.path.join("src", "main.py")) as py, open(
-        os.path.join("src", "main.ipynb"), "w"
+    with open(os.path.join("goosestone", "main.py")) as py, open(
+        os.path.join("goosestone", "main.ipynb"), "w"
     ) as ipynb:
         notebook: dict[str, Union[list[object], dict[str, object], int]] = {
             "cells": [{"cell_type": "code", "metadata": {}, "source": py.read()}],
