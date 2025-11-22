@@ -18,7 +18,7 @@ def main() -> None:
     pg.display.set_caption("COSC 1210")
     render.init()
     timer = pg.time.Clock()
-    world: map.MapGrid = map.MapGrid(3, 3, 16, 24)
+    world: map.MapGrid = map.MapGrid(3, 3, MAP_WIDTH, MAP_HEIGHT)
     spawner: sprite.Spawner = sprite.Spawner()
     running: bool = True
     spawner.add_sprite("main", sprite.TextureSprite(display, (9, 4), (3, 6), True))
