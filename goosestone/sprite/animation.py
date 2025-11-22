@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 from collections.abc import Iterable, Iterator
 from typing import Optional, cast
 
+import config
+import maps
 import util
 from sprite import Sprite
 
@@ -57,7 +59,7 @@ class SpriteMoveTask(Task):
 
     def reset(self) -> None:
         self.progress = 0
-        self.target.screen_pos = self.start
+        self.start = self.target.screen_pos
         self.target.align_map_pos()
 
     def __next__(self) -> None:
@@ -72,6 +74,34 @@ class SpriteMoveTask(Task):
             return None
         else:
             raise StopIteration
+
+
+class CollideMoveTask(SpriteMoveTask):
+    map: maps.Map
+
+    def __init__(
+        self,
+        target: Sprite,
+        duration: int,
+        stop: tuple[int, int],
+        map: maps.Map,
+        start: Optional[tuple[int, int]] = None,
+    ) -> None:
+        super().__init__(target, duration, stop, start)
+        self.map = map
+
+    def __next__(self) -> None:
+        prev_screen: tuple[int, int] = self.target.screen_pos
+        prev_map: tuple[int, int] = self.target.map_pos
+        super().__next__()
+        cur_x, cur_y = self.target.map_pos
+        if (
+            self.map.tiles[cur_x][cur_y].tile_type == maps.TileType.MOUNTAIN
+        ):  # Bouncing back
+            self.target.screen_pos = prev_screen
+            self.reset()
+            self.stop = util.map_to_screen(prev_map)
+            self.duration = config.FRAMERATE // 10
 
 
 class TextureSeqTask(Task):

@@ -1,8 +1,7 @@
 from random import randrange
 
+import maps
 import pygame as pg
-
-import map
 import render
 import sprite
 import sprite.animation as ani
@@ -18,7 +17,7 @@ def main() -> None:
     pg.display.set_caption("COSC 1210")
     render.init()
     timer = pg.time.Clock()
-    world: map.MapGrid = map.MapGrid(3, 3, MAP_WIDTH, MAP_HEIGHT)
+    world: maps.MapGrid = maps.MapGrid(3, 3, MAP_WIDTH, MAP_HEIGHT)
     spawner: sprite.Spawner = sprite.Spawner()
     running: bool = True
     spawner.add_sprite("main", sprite.TextureSprite(display, (9, 4), (3, 6), True))
@@ -56,7 +55,9 @@ def main() -> None:
                 ) != None and map_pos != main_sprite.map_pos:
                     spawner.add_animation(
                         "mouse",
-                        ani.SpriteMoveTask(main_sprite, FRAMERATE // 2, (map_pos)),
+                        ani.CollideMoveTask(
+                            main_sprite, FRAMERATE // 2, map_pos, world.focus_map()
+                        ),
                     )
         world.focus_map().draw(display)
 
