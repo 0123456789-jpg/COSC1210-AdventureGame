@@ -4,7 +4,7 @@
 
 This is my final project for COSC 1210 (Computer Science I) Fall 2025.
 
-In this game, you will be a goose, move around, jump through portals, and collect gems. When you collect all kinds of gems, you simply win. Challenge your self by increasing the number of dimensions or speed up your run time.
+In this game, you will be a goose, move around, jump through portals, and collect gems. When you collect all kinds of gems, you simply win. Challenge yourself by increasing the number of dimensions or speed up your run time.
 
 ## Launch
 
