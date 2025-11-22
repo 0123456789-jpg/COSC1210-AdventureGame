@@ -23,7 +23,7 @@ Click on the map to walk there. Remember your goose will stop if there's a mount
         [timestamp]/
         [timestamp]/
     goosestone/
-        images/
+        assets/
             tileset.png
             type.png
         sprite/
