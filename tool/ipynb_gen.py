@@ -1,13 +1,12 @@
 import json
 import os
-from typing import Union
 
 
 def main() -> None:
     with open(os.path.join("goosestone", "main.py")) as py, open(
         os.path.join("goosestone", "main.ipynb"), "w"
     ) as ipynb:
-        notebook: dict[str, Union[list[object], dict[str, object], int]] = {
+        notebook: dict[str, object] = {
             "cells": [{"cell_type": "code", "metadata": {}, "source": py.read()}],
             "metadata": {
                 "kernelspec": {
