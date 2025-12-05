@@ -208,3 +208,6 @@ __marimo__/
 
 # Apple
 .DS_Store
+
+# VS Code Counter
+.VSCodeCounter
