@@ -104,7 +104,27 @@ class MainMoveTask(SpriteMoveTask):
         elif tile.tile_type == maps.TileType.PORTAL:
             self.target.map_pos = (0, 1)
             self.target.align_screen_pos()
-            self.world.jump(tile.info["portal"])
+
+            # Teleportation START
+            if (
+                self.world.focus_map().portal_colors[tile.location] != -1
+            ):  # Normal condition
+                src_map = self.world.focus
+                src_portal_idx = list(
+                    self.world.focus_map().portal_colors.keys()
+                ).index(tile.location)
+                dest_map = self.world.pairs[src_map][src_portal_idx]
+                dest_portal_idx = self.world.pairs[dest_map].index(src_map)
+                self.world.jump(dest_map)
+                dest_portal_coord = list(self.world.focus_map().portal_colors.keys())[
+                    dest_portal_idx
+                ]
+                x, y = dest_portal_coord
+                self.target.map_pos = (x, y + 1)
+                self.target.align_screen_pos()
+            else:  # Bottom-less pit
+                pass
+            # Teleportation END
             raise StopIteration
 
 
