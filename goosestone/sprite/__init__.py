@@ -1,6 +1,7 @@
-from abc import ABC, abstractmethod
+from abc import ABC,  abstractmethod
 from typing import Callable, Optional
 
+import maps
 import pygame as pg
 import render
 import util
@@ -59,6 +60,44 @@ class TextureSprite(Sprite):
             )
         else:
             render.draw_tile_custom(self.surface, self.texture, self.screen_pos)
+
+
+class TimerSprite(TextureSprite):
+    hover: tuple[int, int]  # Texture when mouse hovering
+    normal: tuple[int, int]
+    world: maps.MapGrid
+
+    def __init__(
+        self,
+        surface: pg.Surface,
+        texture: tuple[int, int],
+        position: tuple[int, int],
+        hover: tuple[int, int],
+        world: maps.MapGrid,
+    ) -> None:
+        super().__init__(surface, texture, position, True)
+        self.hover = hover
+        self.normal = texture
+        self.world = world
+
+    def draw(self) -> None:
+        if self.world.focus == (0, 0):
+            btn_rect: pg.Rect = pg.Rect(
+                util.map_to_screen((self.map_pos[0], self.map_pos[1] - 1)),
+                (render.TILE_WIDTH, render.TILE_HEIGHT * 2),
+            )
+            if btn_rect.collidepoint(pg.mouse.get_pos()):
+                pg.mouse.set_cursor(pg.SYSTEM_CURSOR_HAND)
+                self.texture = self.hover
+                super().draw()
+                text: pg.Surface = pg.font.Font(None, 24).render(
+                    "timestamp: " + "hovering", False, pg.Color(255, 255, 0)
+                )
+                self.surface.blit(text, (8, 8))
+            else:
+                pg.mouse.set_cursor(pg.SYSTEM_CURSOR_ARROW)
+                self.texture = self.normal
+                super().draw()
 
 
 class CustomSprite(Sprite):

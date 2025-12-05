@@ -8,7 +8,6 @@ size of a regular texture is 32 by 16, while a double-height texture's size is
 """
 
 import os
-import random
 
 import pygame as pg
 import util
@@ -100,26 +99,3 @@ def draw_tile_2h_custom(
         dest,
         area=(origin[0], origin[1], TILE_WIDTH, 2 * TILE_HEIGHT),
     )
-
-
-def generate_background(
-    width: int, height: int
-) -> list[tuple[tuple[int, int], tuple[int, int]]]:
-    """
-    Generates a random background pattern for a given size of the map.
-
-    Parameters:
-        width (int): Width of the map.
-        height (int): Height of the map.
-
-    Returns:
-        list[tuple[tuple[int, int], tuple[int, int]]]: A list of source coordinates
-        (position in the tile set) and destination coordinates (position in the target
-        `Surface`) that can be used directly as `draw_tile()`'s parameters. Both coordinates
-        are represented in (x, y).
-    """
-    return [
-        ((random.randrange(6), random.randrange(4)), (x, y))
-        for y in range(height)
-        for x in range(width)
-    ]

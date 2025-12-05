@@ -90,6 +90,8 @@ class MainMoveTask(SpriteMoveTask):
     ) -> None:
         super().__init__(target, duration, stop, start)
         self.world = world
+        if stop[1] >= config.MAP_HEIGHT:
+            self.duration = 0
 
     def __next__(self) -> None:
         prev_screen: tuple[int, int] = self.target.screen_pos
@@ -121,10 +123,24 @@ class MainMoveTask(SpriteMoveTask):
                     dest_portal_idx
                 ]
                 x, y = dest_portal_coord
-                self.target.map_pos = (x, y + 1)
+                available = False
+                for a, b in [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]:
+                    if (
+                        self.world.focus_map().tiles[a][b].tile_type
+                        == maps.TileType.GRASSLAND
+                        and 0 <= a <= config.MAP_WIDTH - 1
+                        and 0 <= b <= config.MAP_HEIGHT - 1
+                    ):
+                        self.target.map_pos = (a, b)
+                        available = True
+                        break
+                if not available:
+                    self.target.map_pos = (x, y)
                 self.target.align_screen_pos()
             else:  # Bottom-less pit
-                pass
+                import pygame as pg
+
+                pg.event.post(pg.event.Event(util.BOTTOMLESS_PIT))
             # Teleportation END
             raise StopIteration
 
