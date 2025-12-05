@@ -2,7 +2,6 @@ from abc import ABC, abstractmethod
 from typing import Callable, Optional
 
 import pygame as pg
-
 import render
 import util
 
@@ -10,7 +9,7 @@ import util
 class Sprite(ABC):
     map_pos: tuple[int, int]
     screen_pos: tuple[int, int]
-    animations: list[str] = []
+    animations: list[str]
 
     @abstractmethod
     def draw(self) -> None:
@@ -44,6 +43,7 @@ class TextureSprite(Sprite):
     ) -> None:
         self.map_pos = position
         self.screen_pos = util.map_to_screen(position)
+        self.animations = []
         self.surface = surface
         self.texture = texture
         self.double_height = double_height
@@ -72,6 +72,7 @@ class CustomSprite(Sprite):
         draw_func: Callable[[tuple[int, int], dict[str, object]], None],
     ) -> None:
         self.map_pos = position
+        self.animations = []
         self.user_data = user_data
         self.draw_func = draw_func
 
@@ -82,8 +83,14 @@ class CustomSprite(Sprite):
 class Spawner:
     import sprite.animation as ani
 
-    sprite_pool: dict[str, Sprite] = {}
-    animation_exec: ani.Executor = ani.Executor()
+    sprite_pool: dict[str, Sprite]
+    animation_exec: ani.Executor
+
+    def __init__(self) -> None:
+        import sprite.animation as ani
+
+        self.sprite_pool = {}
+        self.animation_exec = ani.Executor()
 
     def add_sprite(self, name: str, sprite: Sprite) -> None:
         self.sprite_pool[name] = sprite

@@ -39,7 +39,7 @@ class Map:
     width: int
     height: int
     tiles: list[list[Tile]]
-    portal_colors: dict[tuple[int, int], int] = {}
+    portal_colors: dict[tuple[int, int], int]
 
     def gen_tiles(self) -> None:
 
@@ -73,6 +73,7 @@ class Map:
     def __init__(self, width: int, height: int) -> None:
         self.width = width
         self.height = height
+        self.portal_colors = {}
         self.gen_tiles()
         pass
 
@@ -97,7 +98,7 @@ class MapGrid:
     width: int
     height: int
     maps: list[list[Map]]
-    focus: tuple[int, int] = (0, 0)
+    focus: tuple[int, int]
     pairs: dict[tuple[int, int], list[tuple[int, int]]]
 
     def __init__(
@@ -109,6 +110,7 @@ class MapGrid:
             [Map(map_width, map_height) for _ in range(grid_height)]
             for _ in range(grid_width)
         ]
+        self.focus = (0, 0)
         # Portal pairs gen START
         pairs: dict[tuple[int, int], list[tuple[int, int]]] = {
             (0, 0): []

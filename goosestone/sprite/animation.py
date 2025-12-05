@@ -9,14 +9,15 @@ from sprite import Sprite
 
 
 class Task(Iterator[None], ABC):
-    duration: int = 0
-    progress: int = 0
+    duration: int
+    progress: int
     target: Sprite
 
     def __init__(self, target: Sprite, duration: int) -> None:
         super().__init__()
         self.target = target
         self.duration = duration
+        self.progress = 0
 
     @abstractmethod
     def __iter__(self) -> Iterator[None]:
@@ -180,7 +181,10 @@ class TextureSeqTask(Task):
 
 
 class Executor:
-    pool: dict[str, Task] = {}
+    pool: dict[str, Task]
+
+    def __init__(self) -> None:
+        self.pool = {}
 
     def add(self, name: str, task: Task) -> None:
         self.pool[name] = task
