@@ -118,29 +118,30 @@ class MapGrid:
         grid_coords = [(x, y) for x in range(grid_height) for y in range(grid_width)]
         grid_coords.remove((0, 0))
         random.shuffle(grid_coords)
-        remaining: dict[tuple[int, int], int] = {
-            (0, 0): len(self.maps[0][0].portal_colors)
+        remaining: dict[tuple[int, int], tuple[int, int]] = {
+            (0, 0): (len(self.maps[0][0].portal_colors), 0)
         }
 
         def new(target: tuple[int, int]) -> None:
             x, y = target
-            remaining[target] = len(self.maps[x][y].portal_colors)
+            remaining[target] = (len(self.maps[x][y].portal_colors), 0)
             pairs[target] = []
 
         def check(target: tuple[int, int]) -> None:
-            remaining[target] -= 1
-            if remaining[target] == 0:
+            length, n = remaining.pop(target)
+            remaining[target] = (length, n + 1)
+            if remaining[target][0] == remaining[target][1]:
                 del remaining[target]
 
         def pair(a: tuple[int, int], b: tuple[int, int]) -> None:
             color = random_portal_color()
             pairs[a].append(b)
             x, y = a
-            idx = list(self.maps[x][y].portal_colors.keys())[remaining[a] - 1]
+            idx = list(self.maps[x][y].portal_colors.keys())[remaining[a][1]]
             self.maps[x][y].portal_colors[idx] = color
             pairs[b].append(a)
             x, y = b
-            idx = list(self.maps[x][y].portal_colors.keys())[remaining[b] - 1]
+            idx = list(self.maps[x][y].portal_colors.keys())[remaining[b][1]]
             self.maps[x][y].portal_colors[idx] = color
             check(a)
             check(b)
@@ -151,7 +152,11 @@ class MapGrid:
             new(coord)
             pair(parent, coord)
         while len(remaining) > 1:  # Extra portals
-            a, b = random.sample(remaining.keys(), 2, counts=remaining.values())
+            a, b = random.sample(
+                remaining.keys(),
+                2,
+                counts=[length - n for length, n in remaining.values()],
+            )
             pair(a, b)
         # Portal pairs gen END
         self.pairs = pairs
