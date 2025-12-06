@@ -12,31 +12,14 @@ Simply hit run in `goosestone/main.ipynb`.
 
 ## Controls
 
-Click on the map to walk there. Remember your goose will stop if there's a mountain in front of it. If you want to quit, hit `escape` key. Press `s` key anytime to save your progress __(TODO)__.
+Click on the map to walk there. Remember your goose will stop if there's a mountain in front of it.
+Press `n` to see dimension hint.
+Press `m` if you're stuck.
+If you want to quit, hit `escape` key.
 
-## File structure
+## Credits
 
-```text
-[root]/
-    drafts/
-        README.md
-        [timestamp]/
-        [timestamp]/
-    goosestone/
-        assets/
-            tileset.png
-            type.png
-        sprite/
-            __init__.py
-            animation.py
-        config.py
-        main.py
-        main.ipynb
-        map.py
-        render.py
-        util.py
-    tool/
-        ipynb_gen.py
-    LICENSE
-    README.md
-```
+- Portal image resource from [`Channa Hub @ KindPNG`](https://www.kindpng.com/userpngs/6273/)
+- Gem image resource from [`ma9ici4n @ itch.io`](https://ma9ici4n.itch.io/gems)
+- Goose image resource from unknown author (provided in-class)
+- Other resources from [`curseofwar`](https://github.com/a-nikolaev/curseofwar)
