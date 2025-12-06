@@ -110,6 +110,9 @@ class MapGrid:
             [Map(map_width, map_height) for _ in range(grid_height)]
             for _ in range(grid_width)
         ]
+        for x, y in [(3, 6), (3, 9)]:
+            self.maps[0][0].tiles[x][y].tile_type = TileType.GRASSLAND
+            self.maps[0][0].portal_colors.pop((x, y), 0)
         self.focus = (0, 0)
         # Portal pairs gen START
         pairs: dict[tuple[int, int], list[tuple[int, int]]] = {

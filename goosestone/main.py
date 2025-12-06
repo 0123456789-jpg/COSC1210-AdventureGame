@@ -7,7 +7,14 @@ import render
 import sprite
 import sprite.animation as ani
 import util
-from config import FRAMERATE, MAP_HEIGHT, MAP_WIDTH, WORLD_HEIGHT, WORLD_WIDTH
+from config import (
+    FRAMERATE,
+    MAP_HEIGHT,
+    MAP_WIDTH,
+    TEXT_ANTIALIASING,
+    WORLD_HEIGHT,
+    WORLD_WIDTH,
+)
 
 
 def main() -> None:
@@ -58,7 +65,7 @@ def main() -> None:
                 running = False
         world.focus_map().draw(display)
         text: pg.Surface = pg.font.Font(None, 24).render(
-            f"Dimension: {world.focus}", False, pg.Color(255, 255, 0)
+            f"Dimension: {world.focus}", TEXT_ANTIALIASING, pg.Color(255, 255, 0)
         )
         display.blit(text, (8, 32))
 
@@ -73,8 +80,8 @@ def main() -> None:
         "You fall into a bottomless pit and lose :(",
         f"You found all gems in {placeholder} and win!",
     ]
-    text: pg.Surface = pg.font.Font(None, 48).render(
-        prompts[exit_reason], False, pg.Color(255, 255, 0)
+    text: pg.Surface = pg.font.Font(None, 36).render(
+        prompts[exit_reason], TEXT_ANTIALIASING, pg.Color(255, 255, 0)
     )
     display.blit(
         text,

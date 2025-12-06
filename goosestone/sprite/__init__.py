@@ -1,6 +1,7 @@
-from abc import ABC,  abstractmethod
+from abc import ABC, abstractmethod
 from typing import Callable, Optional
 
+import config
 import maps
 import pygame as pg
 import render
@@ -66,6 +67,7 @@ class TimerSprite(TextureSprite):
     hover: tuple[int, int]  # Texture when mouse hovering
     normal: tuple[int, int]
     world: maps.MapGrid
+    time: int  # Played time in frames
 
     def __init__(
         self,
@@ -79,8 +81,10 @@ class TimerSprite(TextureSprite):
         self.hover = hover
         self.normal = texture
         self.world = world
+        self.time = 0
 
     def draw(self) -> None:
+        self.time += 1  # Tick time here
         if self.world.focus == (0, 0):
             btn_rect: pg.Rect = pg.Rect(
                 util.map_to_screen((self.map_pos[0], self.map_pos[1] - 1)),
@@ -90,14 +94,25 @@ class TimerSprite(TextureSprite):
                 pg.mouse.set_cursor(pg.SYSTEM_CURSOR_HAND)
                 self.texture = self.hover
                 super().draw()
+                hour, minute, second = self.get_time()
                 text: pg.Surface = pg.font.Font(None, 24).render(
-                    "timestamp: " + "hovering", False, pg.Color(255, 255, 0)
+                    "Time played: " + f"{hour}h{minute}m{second}s",
+                    config.TEXT_ANTIALIASING,
+                    pg.Color(255, 255, 0),
                 )
                 self.surface.blit(text, (8, 8))
             else:
                 pg.mouse.set_cursor(pg.SYSTEM_CURSOR_ARROW)
                 self.texture = self.normal
                 super().draw()
+
+    def get_time(self) -> tuple[int, int, int]:
+        second = self.time // config.FRAMERATE
+        minute = second // 60
+        second = second % 60
+        hour = minute // 60
+        minute = minute % 60
+        return (hour, minute, second)
 
 
 class CustomSprite(Sprite):
