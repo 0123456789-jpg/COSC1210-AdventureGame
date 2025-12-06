@@ -136,8 +136,8 @@ class MapGrid:
         ] = {}
         world_portals = {
             (x, y): list(self.maps[x][y].portals.keys())
-            for x in range(grid_height)
-            for y in range(grid_width)
+            for x in range(grid_width)
+            for y in range(grid_height)
         }
         grid_coords = list(world_portals.keys())
         grid_coords.remove((0, 0))
