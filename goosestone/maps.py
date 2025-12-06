@@ -39,7 +39,7 @@ class Map:
     width: int
     height: int
     tiles: list[list[Tile]]
-    portal_colors: dict[tuple[int, int], int]
+    portals: dict[tuple[int, int], tuple[int, int]]  # Value: (portal_id,color)
 
     def gen_tiles(self) -> None:
 
@@ -51,7 +51,7 @@ class Map:
                     counts=[45, 4, 1],
                 )[0]
             ) == TileType.PORTAL:
-                self.portal_colors[(x, y)] = -1
+                self.portals[(x, y)] = (-1, -1)
             return ret
 
         self.tiles = [
@@ -65,15 +65,11 @@ class Map:
             ]
             for x in range(self.width)
         ]
-        portals = list(self.portal_colors.keys())
-        random.shuffle(portals)
-        shuffled = {c: self.portal_colors[c] for c in portals}
-        self.portal_colors = shuffled
 
     def __init__(self, width: int, height: int) -> None:
         self.width = width
         self.height = height
-        self.portal_colors = {}
+        self.portals = {}
         self.gen_tiles()
         pass
 
@@ -88,7 +84,7 @@ class Map:
                 render.draw_tile_2h(surface, (variant, 4), tile.location)
             elif tile.tile_type == TileType.PORTAL:
                 loc = tile.location
-                color = self.portal_colors[loc]
+                color = self.portals[loc][1]
                 if color == -1:
                     color = random_portal_color()
                 render.draw_tile(surface, (5, color), loc)
@@ -99,7 +95,13 @@ class MapGrid:
     height: int
     maps: list[list[Map]]
     focus: tuple[int, int]
-    pairs: dict[tuple[int, int], list[tuple[int, int]]]
+    pairs: dict[
+        int,
+        tuple[
+            tuple[tuple[int, int], tuple[int, int]],
+            tuple[tuple[int, int], tuple[int, int]],
+        ],
+    ]
     gems: dict[int, tuple[tuple[int, int], tuple[int, int]]]
 
     def __init__(
@@ -113,40 +115,50 @@ class MapGrid:
         ]
         for x, y in [(3, 6), (3, 9)]:
             self.maps[0][0].tiles[x][y].tile_type = TileType.GRASSLAND
-            self.maps[0][0].portal_colors.pop((x, y), 0)
+            self.maps[0][0].portals.pop((x, y), (0, 0))
         self.focus = (0, 0)
+
         # Portal pairs gen START
-        pairs: dict[tuple[int, int], list[tuple[int, int]]] = {
-            (0, 0): []
-        }  # (0,0) as root node
-        grid_coords = [(x, y) for x in range(grid_height) for y in range(grid_width)]
+        def helper():
+            inner: int = 0
+            while True:
+                yield inner
+                inner += 1
+
+        portal_id_counter = helper()
+
+        pairs: dict[
+            int,
+            tuple[
+                tuple[tuple[int, int], tuple[int, int]],
+                tuple[tuple[int, int], tuple[int, int]],
+            ],
+        ] = {}
+        world_portals = {
+            (x, y): list(self.maps[x][y].portals.keys())
+            for x in range(grid_height)
+            for y in range(grid_width)
+        }
+        grid_coords = list(world_portals.keys())
         grid_coords.remove((0, 0))
         random.shuffle(grid_coords)
-        remaining: dict[tuple[int, int], tuple[int, int]] = {
-            (0, 0): (len(self.maps[0][0].portal_colors), 0)
-        }
+        remaining: dict[tuple[int, int], list[tuple[int, int]]] = {}
 
         def new(target: tuple[int, int]) -> None:
-            x, y = target
-            remaining[target] = (len(self.maps[x][y].portal_colors), 0)
-            pairs[target] = []
+            remaining[target] = world_portals.pop(target)
 
         def check(target: tuple[int, int]) -> None:
-            length, n = remaining.pop(target)
-            remaining[target] = (length, n + 1)
-            if remaining[target][0] == remaining[target][1]:
+            if len(remaining[target]) == 0:
                 del remaining[target]
 
         def pair(a: tuple[int, int], b: tuple[int, int]) -> None:
+            portal_id = next(portal_id_counter)
             color = random_portal_color()
-            pairs[a].append(b)
-            x, y = a
-            idx = list(self.maps[x][y].portal_colors.keys())[remaining[a][1]]
-            self.maps[x][y].portal_colors[idx] = color
-            pairs[b].append(a)
-            x, y = b
-            idx = list(self.maps[x][y].portal_colors.keys())[remaining[b][1]]
-            self.maps[x][y].portal_colors[idx] = color
+            a_full = (a, remaining[a].pop())
+            b_full = (b, remaining[b].pop())
+            self.maps[a[0]][a[1]].portals[a_full[1]] = (portal_id, color)
+            self.maps[b[0]][b[1]].portals[b_full[1]] = (portal_id, color)
+            pairs[portal_id] = (a_full, b_full)
             check(a)
             check(b)
 
@@ -156,11 +168,7 @@ class MapGrid:
             new(coord)
             pair(parent, coord)
         while len(remaining) > 1:  # Extra portals
-            a, b = random.sample(
-                remaining.keys(),
-                2,
-                counts=[length - n for length, n in remaining.values()],
-            )
+            a, b = random.sample(remaining.keys(), 2)
             pair(a, b)
         # Portal pairs gen END
         self.pairs = pairs

@@ -61,8 +61,10 @@ def main() -> None:
             elif e.type == pg.MOUSEBUTTONUP:
                 map_pos: tuple[int, int] = util.screen_to_map(e.dict["pos"])
                 if (
-                    main_sprite := spawner.get_sprite("main")
-                ) != None and map_pos != main_sprite.map_pos:
+                    (main_sprite := spawner.get_sprite("main")) != None
+                    and map_pos != main_sprite.map_pos
+                    and len(main_sprite.animations) == 0
+                ):
                     spawner.add_animation(
                         "mouse",
                         ani.MainMoveTask(main_sprite, FRAMERATE // 2, map_pos, world),
@@ -77,8 +79,10 @@ def main() -> None:
                         spawner.add_animation(idx, gem.collect_animation())
                         gem_collected.add(idx)
                         if len(gem_collected) == 7:
-                            exit_reason = 2
-                            running = False
+                            pg.time.set_timer(util.GAME_COMPLETE, 1000, loops=1)
+            elif e.type == util.GAME_COMPLETE:
+                exit_reason = 2
+                running = False
         world.focus_map().draw(display)
         text: pg.Surface = pg.font.Font(None, 24).render(
             f"Dimension: {world.focus}", TEXT_ANTIALIASING, pg.Color(255, 255, 0)

@@ -105,24 +105,18 @@ class MainMoveTask(SpriteMoveTask):
             self.stop = util.map_to_screen(prev_map)
             self.duration = config.FRAMERATE // 10
         elif tile.tile_type == maps.TileType.PORTAL:
-            self.target.map_pos = (0, 1)
-            self.target.align_screen_pos()
-
             # Teleportation START
-            if (
-                self.world.focus_map().portal_colors[tile.location] != -1
-            ):  # Normal condition
-                src_map = self.world.focus
-                src_portal_idx = list(
-                    self.world.focus_map().portal_colors.keys()
-                ).index(tile.location)
-                dest_map = self.world.pairs[src_map][src_portal_idx]
-                dest_portal_idx = self.world.pairs[dest_map].index(src_map)
+            portal_info = self.world.focus_map().portals[tile.location]
+            if portal_info[1] != -1:  # Normal condition
+                idx = portal_info[0]
+                pair = [v for v in self.world.pairs[idx]]
+                if pair[0] == (self.world.focus, tile.location):
+                    del pair[0]
+                else:
+                    del pair[1]
+                dest_map, dest_tile = pair[0]
                 self.world.jump(dest_map)
-                dest_portal_coord = list(self.world.focus_map().portal_colors.keys())[
-                    dest_portal_idx
-                ]
-                x, y = dest_portal_coord
+                x, y = dest_tile
                 available = False
                 for a, b in [(x - 1, y), (x + 1, y), (x, y - 1), (x, y + 1)]:
                     if (
