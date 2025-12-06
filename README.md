@@ -23,3 +23,7 @@ If you want to quit, hit `escape` key.
 - Gem image resource from [`ma9ici4n @ itch.io`](https://ma9ici4n.itch.io/gems)
 - Goose image resource from unknown author (provided in-class)
 - Other resources from [`curseofwar`](https://github.com/a-nikolaev/curseofwar)
+
+## Future Ideas
+
+__PORT TO RUST I HATE PYTHON__
