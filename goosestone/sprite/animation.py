@@ -143,6 +143,13 @@ class MainMoveTask(SpriteMoveTask):
                 pg.event.post(pg.event.Event(util.BOTTOMLESS_PIT))
             # Teleportation END
             raise StopIteration
+        else:  # maps.TileType.GRASSLAND
+            compound = (self.world.focus, self.target.map_pos)
+            if compound in self.world.gems.values():
+                import pygame as pg
+
+                idx = next(k for k, v in self.world.gems.items() if v == compound)
+                pg.event.post(pg.event.Event(util.GEM_COLLECTED, {"index": idx}))
 
 
 class TextureSeqTask(Task):

@@ -29,12 +29,14 @@ def main() -> None:
     spawner: sprite.Spawner = sprite.Spawner()
     running: bool = True
     exit_reason: Literal[0, 1, 2] = 0
+    gem_collected: set[str] = set()
     spawner.add_sprite("main", sprite.TextureSprite(display, (9, 4), (3, 6), True))
     spawner.add_sprite(
         "timer", sprite.TimerSprite(display, (2, 15), (3, 9), (2, 12), world)
     )
-    for gem in world.gems:
-        idx, grid_pos, map_pos = gem
+    for gem in world.gems.items():
+        idx, pos = gem
+        grid_pos, map_pos = pos
         spawner.add_sprite(
             str(idx), sprite.GemSprite(display, map_pos, idx, grid_pos, world)
         )
@@ -68,6 +70,15 @@ def main() -> None:
             elif e.type == util.BOTTOMLESS_PIT:
                 exit_reason = 1
                 running = False
+            elif e.type == util.GEM_COLLECTED:
+                idx = str(e.dict["index"])
+                if (gem := spawner.get_sprite(idx)) != None:
+                    if isinstance(gem, sprite.GemSprite) and not gem.found:
+                        spawner.add_animation(idx, gem.collect_animation())
+                        gem_collected.add(idx)
+                        if len(gem_collected) == 7:
+                            exit_reason = 2
+                            running = False
         world.focus_map().draw(display)
         text: pg.Surface = pg.font.Font(None, 24).render(
             f"Dimension: {world.focus}", TEXT_ANTIALIASING, pg.Color(255, 255, 0)
@@ -79,11 +90,17 @@ def main() -> None:
         display.fill((0, 0, 0))
         timer.tick(FRAMERATE)
 
-    placeholder = "0h0m0s"
+    def get_time() -> tuple[int, int, int]:
+        if isinstance((timer := spawner.get_sprite("timer")), sprite.TimerSprite):
+            return timer.get_time()
+        else:
+            return (0, 0, 0)
+
+    hour, minute, second = get_time()
     prompts: list[str] = [
         "Game will quit in 3 seconds...",
         "You fall into a bottomless pit and lose :(",
-        f"You found all gems in {placeholder} and win!",
+        f"You found all gems in {hour}h{minute}m{second}s and win!",
     ]
     text: pg.Surface = pg.font.Font(None, 36).render(
         prompts[exit_reason], TEXT_ANTIALIASING, pg.Color(255, 255, 0)

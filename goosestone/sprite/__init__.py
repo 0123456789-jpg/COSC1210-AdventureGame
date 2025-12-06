@@ -121,6 +121,7 @@ class GemSprite(TextureSprite):
     gem_type: int
     grid_pos: tuple[int, int]
     world: maps.MapGrid
+    found: bool
 
     def __init__(
         self,
@@ -134,16 +135,18 @@ class GemSprite(TextureSprite):
         self.gem_type = gem_type
         self.grid_pos = grid_pos
         self.world = world
+        self.found = False
 
     def draw(self) -> None:
-        if self.world.focus == self.grid_pos:
+        if self.world.focus == self.grid_pos or self.found:
             super().draw()
 
     def collect_animation(self) -> SpriteMoveTask:
         from sprite.animation import SpriteMoveTask
 
+        self.found = True
         return SpriteMoveTask(
-            self, config.FRAMERATE, (config.MAP_HEIGHT, self.gem_type)
+            self, config.FRAMERATE, (self.gem_type, config.MAP_HEIGHT + 1)
         )
 
 
