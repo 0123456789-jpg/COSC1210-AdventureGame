@@ -40,6 +40,9 @@ def main() -> None:
         spawner.add_sprite(
             str(idx), sprite.GemSprite(display, map_pos, idx, grid_pos, world)
         )
+    spawner.add_sprite(
+        "dimension", sprite.DimensionHelperSprite((8, 32), display, False, world)
+    )
     while running:
         for e in pg.event.get():
             if e.type == pg.QUIT:
@@ -58,10 +61,19 @@ def main() -> None:
                 elif e.dict["key"] == pg.K_ESCAPE:
                     exit_reason = 0
                     running = False
+                elif e.dict["key"] == pg.K_n:
+                    if isinstance(
+                        (dim_sprite := spawner.get_sprite("dimension")),
+                        sprite.DimensionHelperSprite,
+                    ):
+                        dim_sprite.toggle()
             elif e.type == pg.MOUSEBUTTONUP:
                 map_pos: tuple[int, int] = util.screen_to_map(e.dict["pos"])
                 if (
-                    (main_sprite := spawner.get_sprite("main")) != None
+                    isinstance(
+                        (main_sprite := spawner.get_sprite("main")),
+                        sprite.TextureSprite,
+                    )
                     and map_pos != main_sprite.map_pos
                     and len(main_sprite.animations) == 0
                 ):
@@ -84,16 +96,13 @@ def main() -> None:
                 exit_reason = 2
                 running = False
         world.focus_map().draw(display)
-        text: pg.Surface = pg.font.Font(None, 24).render(
-            f"Dimension: {world.focus}", TEXT_ANTIALIASING, pg.Color(255, 255, 0)
-        )
-        display.blit(text, (8, 32))
 
         spawner.tick()
         pg.display.flip()
         display.fill((0, 0, 0))
         timer.tick(FRAMERATE)
 
+    # Quit screen
     def get_time() -> tuple[int, int, int]:
         if isinstance((timer := spawner.get_sprite("timer")), sprite.TimerSprite):
             return timer.get_time()

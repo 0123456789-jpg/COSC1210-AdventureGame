@@ -169,6 +169,37 @@ class CustomSprite(Sprite):
         self.draw_func(self.map_pos, self.user_data)
 
 
+class DimensionHelperSprite(Sprite):
+    visible: bool
+    world: maps.MapGrid
+    surface: pg.Surface
+
+    def __init__(
+        self,
+        position: tuple[int, int],  # Screen position
+        surface: pg.Surface,
+        visible: bool,
+        world: maps.MapGrid,
+    ) -> None:
+        super().__init__()
+        self.visible = visible
+        self.world = world
+        self.screen_pos = position
+        self.surface = surface
+
+    def draw(self) -> None:
+        if self.visible:
+            text: pg.Surface = pg.font.Font(None, 24).render(
+                f"Dimension: {self.world.focus}",
+                config.TEXT_ANTIALIASING,
+                pg.Color(255, 255, 0),
+            )
+            self.surface.blit(text, self.screen_pos)
+
+    def toggle(self) -> None:
+        self.visible = not self.visible
+
+
 class Spawner:
     import sprite.animation as ani
 
