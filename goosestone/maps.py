@@ -100,6 +100,7 @@ class MapGrid:
     maps: list[list[Map]]
     focus: tuple[int, int]
     pairs: dict[tuple[int, int], list[tuple[int, int]]]
+    gems: list[tuple[int, tuple[int, int], tuple[int, int]]]
 
     def __init__(
         self, grid_width: int, grid_height: int, map_width: int, map_height: int
@@ -163,6 +164,30 @@ class MapGrid:
             pair(a, b)
         # Portal pairs gen END
         self.pairs = pairs
+        # Gems gen START
+        gems: list[tuple[int, tuple[int, int], tuple[int, int]]] = []
+        for i in range(7):
+
+            def gen_pos() -> tuple[tuple[int, int], tuple[int, int], bool]:
+                grid_pos_x = random.randrange(grid_width)
+                grid_pos_y = random.randrange(grid_height)
+                map_pos_x = random.randrange(map_width)
+                map_pos_y = random.randrange(map_height)
+                if (
+                    self.maps[grid_pos_x][grid_pos_y]
+                    .tiles[map_pos_x][map_pos_y]
+                    .tile_type
+                    == TileType.GRASSLAND
+                ) and (((grid_pos_x, grid_pos_y), (map_pos_x, map_pos_y)) not in gems):
+                    return ((grid_pos_x, grid_pos_y), (map_pos_x, map_pos_y), True)
+                else:
+                    return ((0, 0), (0, 0), False)
+
+            while (result := gen_pos())[2]:
+                grid_pos, map_pos, _ = result
+                gems.append((i, grid_pos, map_pos))
+        # Gems gen END
+        self.gems = gems
 
     def jump(self, new_focus: tuple[int, int]) -> None:
         self.focus = new_focus

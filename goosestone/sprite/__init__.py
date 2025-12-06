@@ -115,6 +115,38 @@ class TimerSprite(TextureSprite):
         return (hour, minute, second)
 
 
+class GemSprite(TextureSprite):
+    from sprite.animation import SpriteMoveTask
+
+    gem_type: int
+    grid_pos: tuple[int, int]
+    world: maps.MapGrid
+
+    def __init__(
+        self,
+        surface: pg.Surface,
+        position: tuple[int, int],
+        gem_type: int,
+        grid_pos: tuple[int, int],
+        world: maps.MapGrid,
+    ) -> None:
+        super().__init__(surface, (9, 2 * gem_type + 6), position, True)
+        self.gem_type = gem_type
+        self.grid_pos = grid_pos
+        self.world = world
+
+    def draw(self) -> None:
+        if self.world.focus == self.grid_pos:
+            super().draw()
+
+    def collect_animation(self) -> SpriteMoveTask:
+        from sprite.animation import SpriteMoveTask
+
+        return SpriteMoveTask(
+            self, config.FRAMERATE, (config.MAP_HEIGHT, self.gem_type)
+        )
+
+
 class CustomSprite(Sprite):
     user_data: dict[str, object]
     draw_func: Callable[[tuple[int, int], dict[str, object]], None]

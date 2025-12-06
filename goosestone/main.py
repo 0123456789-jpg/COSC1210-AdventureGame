@@ -33,6 +33,11 @@ def main() -> None:
     spawner.add_sprite(
         "timer", sprite.TimerSprite(display, (2, 15), (3, 9), (2, 12), world)
     )
+    for gem in world.gems:
+        idx, grid_pos, map_pos = gem
+        spawner.add_sprite(
+            str(idx), sprite.GemSprite(display, map_pos, idx, grid_pos, world)
+        )
     while running:
         for e in pg.event.get():
             if e.type == pg.QUIT:
